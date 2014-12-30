@@ -1,4 +1,12 @@
 
+Overview of changes in libmbim 1.10.2
+----------------------------------------
+
+ * Attach timeout and idle events to the thread-default context.
+
+ * Fix bashisms in the mbim-network script.
+
+
 Overview of changes in libmbim 1.10
 ----------------------------------------
 
