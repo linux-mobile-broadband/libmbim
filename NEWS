@@ -1,4 +1,10 @@
 
+Overview of changes in libmbim 1.12.2
+----------------------------------------
+
+* Fix assertion triggered by a bug in the removal of unreleased transactions.
+
+
 Overview of changes in libmbim 1.12
 ----------------------------------------
 
