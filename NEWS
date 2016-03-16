@@ -1,4 +1,18 @@
 
+Overview of changes in libmbim 1.12.4
+----------------------------------------
+
+ * Updated '--connect' arguments to allow specifying "key=value" pairs. The old
+   legacy "[(APN),(PAP|CHAP|MSCHAPV2),(Username),(Password)]" format is kept as
+   valid for backwards compatibility, although it should be assumed deprecated.
+
+ * mbimcli: longer timeouts for connect/register operations.
+ * mbimcli: report IP configuration when connected.
+ * mbimcli: allow specifying session ids.
+ * libmbim-glib: probing retry interval increased to 5s.
+ * and some other minor fixes...
+
+
 Overview of changes in libmbim 1.12.2
 ----------------------------------------
 
