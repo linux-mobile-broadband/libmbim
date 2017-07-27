@@ -329,6 +329,7 @@ query_device_caps_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -419,6 +420,7 @@ query_subscriber_ready_status_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -478,6 +480,7 @@ query_radio_state_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -524,6 +527,7 @@ query_device_services_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -616,6 +620,7 @@ pin_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -748,6 +753,7 @@ connect_ready (MbimDevice   *device,
             &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1061,6 +1067,7 @@ home_provider_ready (MbimDevice   *device,
                                                     &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1118,6 +1125,7 @@ preferred_providers_ready (MbimDevice   *device,
                                                           &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1188,6 +1196,7 @@ visible_providers_ready (MbimDevice   *device,
                                                         &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1274,6 +1283,7 @@ register_state_ready (MbimDevice   *device,
                                                      &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1350,6 +1360,7 @@ signal_state_ready (MbimDevice   *device,
                                                    &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1413,6 +1424,7 @@ packet_service_ready (MbimDevice   *device,
                                                      &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
@@ -1488,6 +1500,7 @@ packet_statistics_ready (MbimDevice   *device,
                                                         &error)) {
         g_printerr ("error: couldn't parse response message: %s\n", error->message);
         g_error_free (error);
+        mbim_message_unref (response);
         shutdown (FALSE);
         return;
     }
