@@ -1,4 +1,24 @@
 
+Overview of changes in libmbim 1.14.2
+----------------------------------------
+
+* libmbim-glib:
+  ** Added MBIM_READY_INFO_FLAG_NONE to MbimReadyInfoFlag.
+  ** Fixed G_DEPRECATED_FOR annotations.
+
+* mbim-proxy:
+  ** Fixed segfault when device goes away while being opened.
+  ** Avoid receiving signals from the parent process.
+
+* mbimcli:
+  ** Fix second ctrl+c handling.
+  ** Add cancellability to the query-ip-configuration action.
+
+* mbim-network:
+  ** Fix bashisms.
+
+* Several other minor improvements and fixes.
+
 Overview of changes in libmbim 1.14
 ----------------------------------------
 
