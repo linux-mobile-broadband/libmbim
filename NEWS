@@ -1,4 +1,11 @@
 
+Overview of changes in libmbim 1.14.4
+----------------------------------------
+
+ * libmbim-glib:
+   ** Avoid using intermediate variables for deprecation warnings.
+   ** Prefer realpath() to canonicalize_file_name().
+
 Overview of changes in libmbim 1.14.2
 ----------------------------------------
 
