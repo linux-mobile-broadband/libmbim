@@ -59,6 +59,26 @@ bytearray_apply_padding (GByteArray *buffer,
     }
 }
 
+static void
+set_error_from_status (GError          **error,
+                       MbimStatusError   status)
+{
+    const gchar *error_string;
+
+    error_string = mbim_status_error_get_string (status);
+    if (error_string)
+        g_set_error_literal (error,
+                             MBIM_STATUS_ERROR,
+                             status,
+                             error_string);
+    else
+        g_set_error (error,
+                     MBIM_STATUS_ERROR,
+                     status,
+                     "Unknown status 0x%08x",
+                     status);
+}
+
 /*****************************************************************************/
 
 GType
@@ -1589,10 +1609,7 @@ mbim_message_open_done_get_result (const MbimMessage  *self,
     if (status == MBIM_STATUS_ERROR_NONE)
         return TRUE;
 
-    g_set_error_literal (error,
-                         MBIM_STATUS_ERROR,
-                         status,
-                         mbim_status_error_get_string (status));
+    set_error_from_status (error, status);
     return FALSE;
 }
 
@@ -1685,10 +1702,7 @@ mbim_message_close_done_get_result (const MbimMessage  *self,
     if (status == MBIM_STATUS_ERROR_NONE)
         return TRUE;
 
-    g_set_error_literal (error,
-                         MBIM_STATUS_ERROR,
-                         status,
-                         mbim_status_error_get_string (status));
+    set_error_from_status (error, status);
     return FALSE;
 }
 
@@ -2050,10 +2064,7 @@ mbim_message_command_done_get_result (const MbimMessage  *self,
     if (status == MBIM_STATUS_ERROR_NONE)
         return TRUE;
 
-    g_set_error_literal (error,
-                         MBIM_STATUS_ERROR,
-                         status,
-                         mbim_status_error_get_string (status));
+    set_error_from_status (error, status);
     return FALSE;
 }
 
@@ -2222,9 +2233,6 @@ mbim_message_response_get_result (const MbimMessage  *self,
         return TRUE;
 
     /* Build error */
-    g_set_error_literal (error,
-                         MBIM_STATUS_ERROR,
-                         status,
-                         mbim_status_error_get_string (status));
+    set_error_from_status (error, status);
     return FALSE;
 }
