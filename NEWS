@@ -1,4 +1,16 @@
 
+Overview of changes in libmbim 1.16.2
+----------------------------------------
+
+ * mbimcli:
+   ** Fix SNR reporting in --atds-query-signal output.
+   ** Longer timeout (60s) in --disconnect.
+   ** Add "ip-type" property to --connect
+
+ * libmbim-glib:
+   ** Fix printing message in Intel Firmware Update service.
+   ** Fix error reporting when unknown status.
+
 Overview of changes in libmbim 1.16
 ----------------------------------------
 
