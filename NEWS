@@ -1,4 +1,13 @@
 
+Overview of changes in libmbim 1.24.2
+----------------------------------------
+
+ * libmbim-glib:
+   ** Fixed several issues in the logic that merges the service subscribe list.
+   ** Improved message reading logic to skip malformed MBIM messages (e.g. AT
+      URCs emitted wrongly in the MBIM port by some Cinterion modules).
+
+
 Overview of changes in libmbim 1.24
 ----------------------------------------
 
