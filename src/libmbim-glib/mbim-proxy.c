@@ -976,8 +976,12 @@ process_command (MbimProxy   *self,
     /* create request holder */
     request = request_new (self, client, message);
 
-    /* replace command transaction id with internal proxy transaction id to avoid collision */
-    mbim_message_set_transaction_id (message, mbim_device_get_next_transaction_id (client->device));
+    if (_mbim_message_fragment_get_current (message) == _mbim_message_fragment_get_total (message) - 1)
+        /* replace command transaction id with internal proxy transaction id to avoid collision */
+        mbim_message_set_transaction_id (message, mbim_device_get_next_transaction_id (client->device));
+    else
+        /* avoid incrementing transaction until the last fragment is processed */
+        mbim_message_set_transaction_id (message, mbim_device_get_transaction_id (client->device));
 
     /* The timeout needs to be big enough for any kind of transaction to
      * complete, otherwise the remote clients will lose the reply if they
