@@ -1,4 +1,15 @@
 
+Overview of changes in libmbim 1.24.6
+----------------------------------------
+
+ * libmbim-glib,device:
+   ** Fixed a GSource use after free.
+   ** Avoid g_file_test() on NULL path.
+   ** Don't warn if descriptors file cannot be read.
+
+ * Several other minor improvements and fixes.
+
+
 Overview of changes in libmbim 1.24.4
 ----------------------------------------
 
