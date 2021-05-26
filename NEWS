@@ -1,4 +1,16 @@
 
+Overview of changes in libmbim 1.24.8
+----------------------------------------
+
+ * libmbim-glib,message:
+   ** Fix read overflow on malformed MBIM messages.
+
+ * build:
+   ** Fix build with GCC 11 and -Wincompatible-pointer-types.
+
+ * Several other minor improvements and fixes.
+
+
 Overview of changes in libmbim 1.24.6
 ----------------------------------------
 
