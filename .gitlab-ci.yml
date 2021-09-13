@@ -75,6 +75,7 @@ build-meson-release:
     - ninja -C build
     - ninja -C build install
     - ninja -C build dist
+    - ninja -C build uninstall
 
 build-autotools-clean-distclean:
   stage: build
