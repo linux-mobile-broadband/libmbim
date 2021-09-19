@@ -18,6 +18,7 @@ GENERATED_H = \
 	mbim-atds.h \
 	mbim-intel-firmware-update.h \
 	mbim-qdu.h \
+	mbim-quectel.h \
 	mbim-ms-basic-connect-extensions.h \
 	mbim-ms-uicc-low-level-access.h
 
@@ -40,6 +41,7 @@ GENERATED_C = \
 	mbim-atds.c \
 	mbim-intel-firmware-update.c \
 	mbim-qdu.c \
+	mbim-quectel.c \
 	mbim-ms-basic-connect-extensions.c \
 	mbim-ms-uicc-low-level-access.c
 
@@ -59,6 +61,7 @@ GENERATED_SECTIONS = \
 	mbim-atds.sections \
 	mbim-intel-firmware-update.sections \
 	mbim-qdu.sections \
+	mbim-quectel.sections \
 	mbim-ms-basic-connect-extensions.sections \
 	mbim-ms-uicc-low-level-access.sections
 
@@ -235,6 +238,15 @@ mbim-qdu.h mbim-qdu.c mbim-qdu.sections: $(top_srcdir)/data/mbim-service-qdu.jso
 		$(PYTHON) $(top_srcdir)/build-aux/mbim-codegen/mbim-codegen \
 			--input $(top_srcdir)/data/mbim-service-qdu.json \
 			--output mbim-qdu
+
+# Quectel Service
+mbim-quectel.h mbim-quectel.c mbim-quectel.sections: $(top_srcdir)/data/mbim-service-quectel.json $(top_srcdir)/build-aux/mbim-codegen/*.py $(top_srcdir)/build-aux/mbim-codegen/mbim-codegen
+	$(AM_V_GEN)  \
+		rm -f mbim-quectel.h && \
+		rm -f mbim-quectel.c && \
+		$(PYTHON) $(top_srcdir)/build-aux/mbim-codegen/mbim-codegen \
+			--input $(top_srcdir)/data/mbim-service-quectel.json \
+			--output mbim-quectel
 
 # Microsoft Basic Connect Extensions service
 mbim-ms-basic-connect-extensions.h mbim-ms-basic-connect-extensions.c mbim-ms-basic-connect-extensions.sections: $(top_srcdir)/data/mbim-service-ms-basic-connect-extensions.json $(top_srcdir)/build-aux/mbim-codegen/*.py $(top_srcdir)/build-aux/mbim-codegen/mbim-codegen

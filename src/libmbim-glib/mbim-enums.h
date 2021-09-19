@@ -1463,6 +1463,25 @@ typedef enum { /*< since=1.26 >*/
     MBIM_UICC_PASS_THROUGH_STATUS_ENABLED    = 1,
 } MbimUiccPassThroughStatus;
 
+/*****************************************************************************/
+/* 'Quectel Radio State' enums */
+
+/**
+ * MbimQuectelRadioSwitchState:
+ * @MBIM_QUECTEL_RADIO_SWITCH_STATE_OFF: Radio is off.
+ * @MBIM_QUECTEL_RADIO_SWITCH_STATE_ON: Radio is on.
+ * @MBIM_QUECTEL_RADIO_SWITCH_STATE_FCC_LOCKED: Radio is FCC locked.
+ *
+ * Radio switch state.
+ *
+ * Since: 1.28
+ */
+typedef enum { /*< since=1.28 >*/
+    MBIM_QUECTEL_RADIO_SWITCH_STATE_OFF        = 0,
+    MBIM_QUECTEL_RADIO_SWITCH_STATE_ON         = 1,
+    MBIM_QUECTEL_RADIO_SWITCH_STATE_FCC_LOCKED = 4,
+} MbimQuectelRadioSwitchState;
+
 G_END_DECLS
 
 #endif /* _LIBMBIM_GLIB_MBIM_ENUMS_H_ */

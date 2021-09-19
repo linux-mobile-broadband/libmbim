@@ -49,6 +49,7 @@
 #include "mbim-qdu.h"
 #include "mbim-ms-basic-connect-extensions.h"
 #include "mbim-ms-uicc-low-level-access.h"
+#include "mbim-quectel.h"
 
 /*****************************************************************************/
 
@@ -1570,6 +1571,9 @@ mbim_message_get_printable (const MbimMessage *self,
             break;
         case MBIM_SERVICE_MS_UICC_LOW_LEVEL_ACCESS:
             fields_printable = __mbim_message_ms_uicc_low_level_access_get_printable_fields (self, line_prefix, &error);
+            break;
+        case MBIM_SERVICE_QUECTEL:
+            fields_printable = __mbim_message_quectel_get_printable_fields (self, line_prefix, &error);
             break;
         case MBIM_SERVICE_INVALID:
         case MBIM_SERVICE_LAST:

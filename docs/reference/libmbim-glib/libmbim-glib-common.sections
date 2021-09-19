@@ -30,6 +30,7 @@ MBIM_UUID_INTEL_FIRMWARE_UPDATE
 MBIM_UUID_MS_BASIC_CONNECT_EXTENSIONS
 MBIM_UUID_MS_SAR
 MBIM_UUID_MS_UICC_LOW_LEVEL_ACCESS
+MBIM_UUID_QUECTEL
 <SUBSECTION Methods>
 mbim_service_get_string
 mbim_service_lookup_name
@@ -69,6 +70,7 @@ MbimCidIntelFirmwareUpdate
 MbimCidMsBasicConnectExtensions
 MbimCidMsSar
 MbimCidMsUiccLowLevelAccess
+MbimCidQuectel
 <SUBSECTION Methods>
 mbim_cid_can_set
 mbim_cid_can_query
@@ -91,6 +93,7 @@ mbim_cid_intel_firmware_update_get_string
 mbim_cid_ms_basic_connect_extensions_get_string
 mbim_cid_ms_sar_get_string
 mbim_cid_ms_uicc_low_level_access_get_string
+mbim_cid_quectel_get_string
 <SUBSECTION Private>
 mbim_cid_atds_build_string_from_mask
 mbim_cid_basic_connect_build_string_from_mask
@@ -109,6 +112,7 @@ mbim_cid_intel_firmware_update_build_string_from_mask
 mbim_cid_ms_basic_connect_extensions_build_string_from_mask
 mbim_cid_ms_sar_build_string_from_mask
 mbim_cid_ms_uicc_low_level_access_build_string_from_mask
+mbim_cid_quectel_build_string_from_mask
 <SUBSECTION Standard>
 MBIM_TYPE_CID_ATDS
 MBIM_TYPE_CID_AUTH
@@ -127,6 +131,7 @@ MBIM_TYPE_CID_INTEL_FIRMWARE_UPDATE
 MBIM_TYPE_CID_MS_BASIC_CONNECT_EXTENSIONS
 MBIM_TYPE_CID_MS_SAR
 MBIM_TYPE_CID_MS_UICC_LOW_LEVEL_ACCESS
+MBIM_TYPE_CID_QUECTEL
 mbim_cid_atds_get_type
 mbim_cid_auth_get_type
 mbim_cid_basic_connect_get_type
@@ -144,6 +149,7 @@ mbim_cid_intel_firmware_update_get_type
 mbim_cid_ms_basic_connect_extensions_get_type
 mbim_cid_ms_uicc_low_level_access_get_type
 mbim_cid_ms_sar_get_type
+mbim_cid_quectel_get_type
 </SECTION>
 
 <SECTION>
@@ -365,6 +371,7 @@ MbimUiccSecureMessaging
 MbimUiccClassByteType
 MbimUiccPassThroughAction
 MbimUiccPassThroughStatus
+MbimQuectelRadioSwitchState
 <SUBSECTION Methods>
 mbim_device_type_get_string
 mbim_cellular_class_build_string_from_mask
@@ -436,6 +443,7 @@ mbim_uicc_secure_messaging_get_string
 mbim_uicc_class_byte_type_get_string
 mbim_uicc_pass_through_action_get_string
 mbim_uicc_pass_through_status_get_string
+mbim_quectel_radio_switch_state_get_string
 <SUBSECTION Private>
 mbim_device_type_build_string_from_mask
 mbim_cellular_class_get_string
@@ -509,6 +517,7 @@ mbim_uicc_secure_messaging_build_string_from_mask
 mbim_uicc_class_byte_type_build_string_from_mask
 mbim_uicc_pass_through_action_build_string_from_mask
 mbim_uicc_pass_through_status_build_string_from_mask
+mbim_quectel_radio_switch_state_build_string_from_mask
 <SUBSECTION Standard>
 MBIM_TYPE_ACTIVATION_COMMAND
 MBIM_TYPE_ACTIVATION_STATE
@@ -585,6 +594,7 @@ MBIM_TYPE_UICC_SECURE_MESSAGING
 MBIM_TYPE_UICC_CLASS_BYTE_TYPE
 MBIM_TYPE_UICC_PASS_THROUGH_ACTION
 MBIM_TYPE_UICC_PASS_THROUGH_STATUS
+MBIM_TYPE_QUECTEL_RADIO_SWITCH_STATE
 mbim_activation_command_get_type
 mbim_activation_state_get_type
 mbim_auth_protocol_get_type
@@ -660,6 +670,7 @@ mbim_uicc_class_byte_type_get_type
 mbim_uicc_secure_messaging_get_type
 mbim_uicc_pass_through_action_get_type
 mbim_uicc_pass_through_status_get_type
+mbim_quectel_radio_switch_state_get_type
 </SECTION>
 
 <SECTION>
