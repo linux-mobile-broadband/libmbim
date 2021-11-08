@@ -1,4 +1,32 @@
 
+Overview of changes in libmbim 1.26.2
+----------------------------------------
+
+ * The meson build setup was updated as follows:
+   ** Added new 'man' boolean option to allow disabling the generation of man
+      pages explicitly; 'true' by default.
+   ** Updated the 'introspection' option to be a boolean; 'true' by default.
+      This effectively removes the automatic enabling of the introspection
+      support based on whether the dependencies are found or not.
+   ** Fixed static build failure with toolchains that don't support dynamic
+      library.
+   ** Add version script linker flag only when available.
+   ** Fixed double quotes in udev rules file generated.
+
+ * Added support for a new Quectel service, including the following operations:
+   ** MBIM_CID_QUECTEL_RADIO_STATE
+
+ * mbim-codegen:
+   ** Explicitly require python3.
+
+ * mbimcli:
+   ** New '--quectel-query-radio-state' and '--quectel-set-radio-state'
+      operations, which provide a way to FCC unlock EM120 modules in new Lenovo
+      laptops.
+
+ * Several other minor improvements and fixes.
+
+
 Overview of changes in libmbim 1.26
 ----------------------------------------
 
