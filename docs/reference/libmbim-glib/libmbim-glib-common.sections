@@ -726,4 +726,5 @@ mbim_message_ms_basic_connect_extensions_lte_attach_status_notification_parse
 MbimDeprecatedCidBasicConnect
 MbimDeprecatedRegistrationFlag
 MbimDeprecatedCidMsBasicConnectExtensions
+MbimDeprecatedLteAttachStatus
 </SECTION>
