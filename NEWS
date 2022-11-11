@@ -1,4 +1,14 @@
 
+Overview of changes in libmbim 1.28.2
+----------------------------------------
+
+ * libmbim-glib: fixed validation of complete fragments to avoid reading out of
+   bounds.
+
+ * mbim-proxy: added --verbose-full flag to allow printing logs with personal
+   info included.
+
+
 Overview of changes in libmbim 1.28
 ----------------------------------------
 
