@@ -1,4 +1,12 @@
 
+Overview of changes in libmbim 1.28.4
+----------------------------------------
+
+ * libmbim-glib:
+   ** Fixed context type conversions to consider all possible APN types.
+   ** Duplicate UTF-16 strings during processing to avoid alignment issues.
+
+
 Overview of changes in libmbim 1.28.2
 ----------------------------------------
 
