@@ -30,6 +30,7 @@ static Context *ctx;
 /* Options */
 static gboolean query_signal_flag;
 static gboolean query_location_flag;
+static gboolean query_operators_flag;
 
 static GOptionEntry entries[] = {
     { "atds-query-signal", 0, 0, G_OPTION_ARG_NONE, &query_signal_flag,
@@ -38,6 +39,10 @@ static GOptionEntry entries[] = {
     },
     { "atds-query-location", 0, 0, G_OPTION_ARG_NONE, &query_location_flag,
       "Query cell location",
+      NULL
+    },
+    { "atds-query-operators", 0, 0, G_OPTION_ARG_NONE, &query_operators_flag,
+      "Query operators",
       NULL
     },
     { NULL, 0, 0, 0, NULL, NULL, NULL }
@@ -68,7 +73,8 @@ mbimcli_atds_options_enabled (void)
         return !!n_actions;
 
     n_actions = (query_signal_flag +
-                 query_location_flag);
+                 query_location_flag +
+                 query_operators_flag);
 
     if (n_actions > 1) {
         g_printerr ("error: too many AT&T Device Service actions requested\n");
@@ -263,6 +269,64 @@ query_location_ready (MbimDevice   *device,
     shutdown (TRUE);
 }
 
+static void
+query_operators_ready (MbimDevice   *device,
+                       GAsyncResult *res)
+{
+    g_autoptr(MbimMessage)           response = NULL;
+    g_autoptr(GError)                error = NULL;
+    guint32                          n_operators = 0;
+    g_autoptr(MbimAtdsProviderArray) operators = NULL;
+    guint                            i;
+
+    response = mbim_device_command_finish (device, res, &error);
+    if (!response || !mbim_message_response_get_result (response, MBIM_MESSAGE_TYPE_COMMAND_DONE, &error)) {
+        g_printerr ("error: operation failed: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    if (!mbim_message_atds_operators_response_parse (
+            response,
+            &n_operators,
+            &operators,
+            &error)) {
+        g_printerr ("error: couldn't parse response message: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    if (!n_operators)
+        g_print ("[%s] No operators given\n", mbim_device_get_path_display (device));
+    else
+        g_print ("[%s] Operators (%u):\n", mbim_device_get_path_display (device), n_operators);
+
+    for (i = 0; i < n_operators; i++) {
+        g_autofree gchar *provider_state_str = NULL;
+        const gchar      *plmn_mode_str = NULL;
+
+        provider_state_str = mbim_provider_state_build_string_from_mask (operators[i]->provider_state);
+        plmn_mode_str = mbim_atds_provider_plmn_mode_get_string (operators[i]->plmn_mode);
+
+        g_print ("\tOperator [%u]:\n"
+                 "\t\t    Provider ID: '%s'\n"
+                 "\t\t  Provider name: '%s'\n"
+                 "\t\t          State: '%s'\n"
+                 "\t\t           Mode: '%s'\n"
+                 "\t\t           RSSI: '%u'\n"
+                 "\t\t     Error rate: '%u'\n",
+                 i,
+                 VALIDATE_UNKNOWN (operators[i]->provider_id),
+                 VALIDATE_UNKNOWN (operators[i]->provider_name),
+                 VALIDATE_UNKNOWN (provider_state_str),
+                 VALIDATE_UNKNOWN (plmn_mode_str),
+                 operators[i]->rssi,
+                 operators[i]->error_rate);
+    }
+
+    shutdown (TRUE);
+}
+
 void
 mbimcli_atds_run (MbimDevice   *device,
                   GCancellable *cancellable)
@@ -296,6 +360,19 @@ mbimcli_atds_run (MbimDevice   *device,
                              10,
                              ctx->cancellable,
                              (GAsyncReadyCallback)query_location_ready,
+                             NULL);
+        return;
+    }
+
+    /* Request to get operators? */
+    if (query_operators_flag) {
+        g_debug ("Asynchronously querying operators...");
+        request = (mbim_message_atds_operators_query_new (NULL));
+        mbim_device_command (ctx->device,
+                             request,
+                             240, /* longer timeout, needs to scan */
+                             ctx->cancellable,
+                             (GAsyncReadyCallback)query_operators_ready,
                              NULL);
         return;
     }
