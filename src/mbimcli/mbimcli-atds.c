@@ -31,6 +31,7 @@ static Context *ctx;
 static gboolean query_signal_flag;
 static gboolean query_location_flag;
 static gboolean query_operators_flag;
+static gboolean query_rat_flag;
 
 static GOptionEntry entries[] = {
     { "atds-query-signal", 0, 0, G_OPTION_ARG_NONE, &query_signal_flag,
@@ -43,6 +44,10 @@ static GOptionEntry entries[] = {
     },
     { "atds-query-operators", 0, 0, G_OPTION_ARG_NONE, &query_operators_flag,
       "Query operators",
+      NULL
+    },
+    { "atds-query-rat", 0, 0, G_OPTION_ARG_NONE, &query_rat_flag,
+      "Query Radio Access Technology",
       NULL
     },
     { NULL, 0, 0, 0, NULL, NULL, NULL }
@@ -74,7 +79,8 @@ mbimcli_atds_options_enabled (void)
 
     n_actions = (query_signal_flag +
                  query_location_flag +
-                 query_operators_flag);
+                 query_operators_flag +
+                 query_rat_flag);
 
     if (n_actions > 1) {
         g_printerr ("error: too many AT&T Device Service actions requested\n");
@@ -327,6 +333,38 @@ query_operators_ready (MbimDevice   *device,
     shutdown (TRUE);
 }
 
+static void
+query_rat_ready (MbimDevice   *device,
+                 GAsyncResult *res)
+{
+    g_autoptr(MbimMessage) response = NULL;
+    g_autoptr(GError)      error = NULL;
+    MbimAtdsRatMode        rat = MBIM_ATDS_RAT_MODE_AUTOMATIC;
+
+    response = mbim_device_command_finish (device, res, &error);
+    if (!response || !mbim_message_response_get_result (response, MBIM_MESSAGE_TYPE_COMMAND_DONE, &error)) {
+        g_printerr ("error: operation failed: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    if (!mbim_message_atds_rat_response_parse (
+            response,
+            &rat,
+            &error)) {
+        g_printerr ("error: couldn't parse response message: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    g_print ("[%s] RAT mode retrieved:\n"
+             "\t      Mode: '%s'\n",
+             mbim_device_get_path_display (device),
+             mbim_atds_rat_mode_get_string (rat));
+
+    shutdown (TRUE);
+}
+
 void
 mbimcli_atds_run (MbimDevice   *device,
                   GCancellable *cancellable)
@@ -373,6 +411,19 @@ mbimcli_atds_run (MbimDevice   *device,
                              240, /* longer timeout, needs to scan */
                              ctx->cancellable,
                              (GAsyncReadyCallback)query_operators_ready,
+                             NULL);
+        return;
+    }
+
+    /* Request to get RAT? */
+    if (query_rat_flag) {
+        g_debug ("Asynchronously querying RAT...");
+        request = (mbim_message_atds_rat_query_new (NULL));
+        mbim_device_command (ctx->device,
+                             request,
+                             10,
+                             ctx->cancellable,
+                             (GAsyncReadyCallback)query_rat_ready,
                              NULL);
         return;
     }
