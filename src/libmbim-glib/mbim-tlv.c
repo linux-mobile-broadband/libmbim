@@ -257,7 +257,7 @@ mbim_tlv_string_new (const gchar  *str,
 
         /* For BE systems, convert from BE to LE */
         if (G_BYTE_ORDER == G_BIG_ENDIAN) {
-            guint i;
+            glong i;
 
             for (i = 0; i < items_written; i++)
                 utf16[i] = GUINT16_TO_LE (utf16[i]);
