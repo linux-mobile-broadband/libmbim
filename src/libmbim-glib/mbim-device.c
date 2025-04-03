@@ -1013,6 +1013,19 @@ process_message (MbimDevice        *self,
                 ctx = g_task_get_task_data (task);
                 g_assert (ctx->fragments == NULL);
                 ctx->fragments = mbim_message_dup (message);
+                if (mbim_utils_get_traces_enabled ()) {
+                    g_autofree gchar *printable = NULL;
+
+                    printable = mbim_message_get_printable_full (ctx->fragments,
+                                                                 self->priv->ms_mbimex_version_major,
+                                                                 self->priv->ms_mbimex_version_minor,
+                                                                 ">>>>>> ",
+                                                                 FALSE,
+                                                                 NULL);
+                    g_debug ("[%s] received message (translated)...\n%s",
+                             self->priv->path_display,
+                             printable);
+                }
                 transaction_task_complete_and_free (task, NULL);
                 return;
             }
