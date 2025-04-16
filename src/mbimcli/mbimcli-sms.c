@@ -32,8 +32,13 @@ static Context *ctx;
 /* Options */
 static gchar *delete_str = NULL;
 static gchar *read_str = NULL;
+static gboolean query_config_flag;
 
 static GOptionEntry entries[] = {
+    { "sms-query-configuration", 0, 0, G_OPTION_ARG_NONE, &query_config_flag,
+      "Query SMS configuration",
+      NULL
+    },
     { "sms-delete", 0, 0, G_OPTION_ARG_STRING, &delete_str,
       "Delete all SMS matching a given filter",
       "[(all|new|old|sent|draft|index=N)]"
@@ -70,7 +75,8 @@ mbimcli_sms_options_enabled (void)
         return !!n_actions;
 
     n_actions = (!!delete_str +
-                 !!read_str);
+                 !!read_str +
+                 query_config_flag);
     if (n_actions > 1) {
         g_printerr ("error: too many SIM actions requested\n");
         exit (EXIT_FAILURE);
@@ -179,6 +185,60 @@ read_sms_ready (MbimDevice   *device,
     return;
 }
 
+static void
+query_sms_config_ready (MbimDevice   *device,
+                        GAsyncResult *res,
+                        gpointer      user_data)
+{
+    g_autoptr(MbimMessage)  response = NULL;
+    g_autoptr(GError)       error = NULL;
+    MbimSmsStorageState     storage_state = MBIM_SMS_STORAGE_STATE_NOT_INITIALIZED;
+    const gchar            *storage_state_str;
+    MbimSmsFormat           format = MBIM_SMS_FORMAT_PDU;
+    const gchar            *format_str;
+    guint32                 max_messages = 0;
+    guint32                 cdma_short_message_size = 0;
+    g_autofree gchar       *sc_address = NULL;
+
+    response = mbim_device_command_finish (device, res, &error);
+    if (!response || !mbim_message_response_get_result (response, MBIM_MESSAGE_TYPE_COMMAND_DONE, &error)) {
+        g_printerr ("error: operation failed: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    if (!mbim_message_sms_configuration_response_parse (response,
+                                                        &storage_state,
+                                                        &format,
+                                                        &max_messages,
+                                                        &cdma_short_message_size,
+                                                        &sc_address,
+                                                        &error)) {
+        g_printerr ("error: couldn't parse response message: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    storage_state_str = mbim_sms_storage_state_get_string (storage_state);
+    format_str = mbim_sms_format_get_string (format);
+
+    g_print ("[%s] SMS capabilities retrieved:\n"
+             "\t          Storage state: '%s'\n"
+             "\t                 Format: '%s'\n"
+             "\t       Max PDU messages: '%u'\n"
+             "\tCDMA short message size: '%u'\n"
+             "\t Service center address: '%s'\n",
+             mbim_device_get_path_display (device),
+             VALIDATE_UNKNOWN (storage_state_str),
+             VALIDATE_UNKNOWN (format_str),
+             max_messages,
+             cdma_short_message_size,
+             sc_address);
+
+    shutdown (TRUE);
+    return;
+}
+
 static gboolean
 op_parse (const gchar *str,
           MbimSmsFlag *filter,
@@ -282,6 +342,22 @@ mbimcli_sms_run (MbimDevice   *device,
                              ctx->cancellable,
                              (GAsyncReadyCallback)read_sms_ready,
                              GINT_TO_POINTER (filter));
+        return;
+    }
+
+    if (query_config_flag) {
+        request = mbim_message_sms_configuration_query_new (&error);
+        if (!request) {
+            g_printerr ("error: couldn't create request: %s\n", error->message);
+            shutdown (FALSE);
+            return;
+        }
+        mbim_device_command (ctx->device,
+                             request,
+                             10,
+                             ctx->cancellable,
+                             (GAsyncReadyCallback)query_sms_config_ready,
+                             NULL);
         return;
     }
 
