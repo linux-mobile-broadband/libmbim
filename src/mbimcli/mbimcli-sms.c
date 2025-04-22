@@ -33,10 +33,15 @@ static Context *ctx;
 static gchar *delete_str = NULL;
 static gchar *read_str = NULL;
 static gboolean query_config_flag;
+static gboolean query_message_store_status_flag;
 
 static GOptionEntry entries[] = {
     { "sms-query-configuration", 0, 0, G_OPTION_ARG_NONE, &query_config_flag,
       "Query SMS configuration",
+      NULL
+    },
+    { "sms-query-message-store-status", 0, 0, G_OPTION_ARG_NONE, &query_message_store_status_flag,
+      "Query SMS message store status",
       NULL
     },
     { "sms-delete", 0, 0, G_OPTION_ARG_STRING, &delete_str,
@@ -76,7 +81,8 @@ mbimcli_sms_options_enabled (void)
 
     n_actions = (!!delete_str +
                  !!read_str +
-                 query_config_flag);
+                 query_config_flag +
+                 query_message_store_status_flag);
     if (n_actions > 1) {
         g_printerr ("error: too many SIM actions requested\n");
         exit (EXIT_FAILURE);
@@ -239,6 +245,46 @@ query_sms_config_ready (MbimDevice   *device,
     return;
 }
 
+static void
+query_sms_message_store_status_ready (MbimDevice   *device,
+                                      GAsyncResult *res,
+                                      gpointer      user_data)
+{
+    g_autoptr(MbimMessage)  response = NULL;
+    g_autoptr(GError)       error = NULL;
+    MbimSmsStatusFlag       status = MBIM_SMS_STATUS_FLAG_NONE;
+    const gchar            *status_str;
+    guint                   message_index = 0;
+
+    response = mbim_device_command_finish (device, res, &error);
+    if (!response || !mbim_message_response_get_result (response, MBIM_MESSAGE_TYPE_COMMAND_DONE, &error)) {
+        g_printerr ("error: operation failed: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    if (!mbim_message_sms_message_store_status_response_parse (response,
+                                                               &status,
+                                                               &message_index,
+                                                               &error)) {
+        g_printerr ("error: couldn't parse response message: %s\n", error->message);
+        shutdown (FALSE);
+        return;
+    }
+
+    status_str = mbim_sms_status_flag_build_string_from_mask (status);
+
+    g_print ("[%s] SMS message store status retrieved:\n"
+             "\t       Status: '%s'\n"
+             "\tMessage index: '%u'\n",
+             mbim_device_get_path_display (device),
+             VALIDATE_UNKNOWN (status_str),
+             message_index);
+
+    shutdown (TRUE);
+    return;
+}
+
 static gboolean
 op_parse (const gchar *str,
           MbimSmsFlag *filter,
@@ -357,6 +403,22 @@ mbimcli_sms_run (MbimDevice   *device,
                              10,
                              ctx->cancellable,
                              (GAsyncReadyCallback)query_sms_config_ready,
+                             NULL);
+        return;
+    }
+
+    if (query_message_store_status_flag) {
+        request = mbim_message_sms_message_store_status_query_new (&error);
+        if (!request) {
+            g_printerr ("error: couldn't create request: %s\n", error->message);
+            shutdown (FALSE);
+            return;
+        }
+        mbim_device_command (ctx->device,
+                             request,
+                             10,
+                             ctx->cancellable,
+                             (GAsyncReadyCallback)query_sms_message_store_status_ready,
                              NULL);
         return;
     }
