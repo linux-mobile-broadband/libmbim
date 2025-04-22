@@ -149,6 +149,7 @@ services_data = [
   ['google'],
   ['fibocom'],
   ['compal'],
+  ['intel-at-tunnel'],
 ]
 
 foreach service_data: services_data

@@ -1,0 +1,18 @@
+[
+  // *********************************************************************************
+  { "type" : "Service",
+    "name" : "Intel AT Tunnel" },
+
+  // *********************************************************************************
+  { "name"         : "AT Command",
+    "service"      : "Intel AT Tunnel",
+    "type"         : "Command",
+    "since"        : "1.34",
+    "set"        : [ { "name"          : "CommandReq",
+                       "format"        : "unsized-byte-array",
+                       "pad-array"     : "FALSE",
+                       "personal-info" : "true" } ],
+    "response"     : [ { "name"          : "CommandResp",
+                         "format"        : "unsized-byte-array",
+                         "personal-info" : "true" } ] }
+]

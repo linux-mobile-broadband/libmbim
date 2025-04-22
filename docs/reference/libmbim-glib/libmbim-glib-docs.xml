@@ -107,6 +107,7 @@
     <xi:include href="xml/mbim-intel-thermal-rf.xml"/>
     <xi:include href="xml/mbim-intel-mutual-authentication.xml"/>
     <xi:include href="xml/mbim-intel-tools.xml"/>
+    <xi:include href="xml/mbim-intel-at-tunnel.xml"/>
   </chapter>
 
   <chapter>
@@ -214,6 +215,10 @@
   <chapter id="api-index-1-32" role="1.32">
     <title>Index of new symbols in 1.32</title>
     <xi:include href="xml/api-index-1.32.xml"></xi:include>
+  </chapter>
+  <chapter id="api-index-1-34" role="1.34">
+    <title>Index of new symbols in 1.34</title>
+    <xi:include href="xml/api-index-1.34.xml"></xi:include>
   </chapter>
 
   <xi:include href="xml/annotation-glossary.xml"><xi:fallback /></xi:include>

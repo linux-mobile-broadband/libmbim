@@ -297,6 +297,14 @@ static const MbimUuid uuid_compal = {
     .e = { 0x45, 0x1c, 0x74, 0xdd, 0xa9, 0x57 }
 };
 
+static const MbimUuid uuid_intel_at_tunnel = {
+    .a = { 0xda, 0x13, 0x8c, 0x64 },
+    .b = { 0x65, 0x15 },
+    .c = { 0x48, 0x93 },
+    .d = { 0x92, 0xb2 },
+    .e = { 0xa1, 0xe1, 0xca, 0x7c, 0x81, 0xca }
+};
+
 static GList *mbim_custom_service_list = NULL;
 
 typedef struct {
@@ -442,6 +450,8 @@ mbim_uuid_from_service (MbimService service)
         return &uuid_fibocom;
     case MBIM_SERVICE_COMPAL:
         return &uuid_compal;
+    case MBIM_SERVICE_INTEL_AT_TUNNEL:
+        return &uuid_intel_at_tunnel;
     case MBIM_SERVICE_LAST:
         g_assert_not_reached ();
     default:
@@ -532,6 +542,9 @@ mbim_uuid_to_service (const MbimUuid *uuid)
 
     if (mbim_uuid_cmp (uuid, &uuid_compal))
         return MBIM_SERVICE_COMPAL;
+
+    if (mbim_uuid_cmp (uuid, &uuid_intel_at_tunnel))
+        return MBIM_SERVICE_INTEL_AT_TUNNEL;
 
     for (l = mbim_custom_service_list; l != NULL; l = l->next) {
         if (mbim_uuid_cmp (&((MbimCustomService *)l->data)->uuid, uuid))
