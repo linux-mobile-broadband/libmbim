@@ -52,6 +52,7 @@
 #include "mbim-google.h"
 #include "mbim-fibocom.h"
 #include "mbim-compal.h"
+#include "mbim-intel-at-tunnel.h"
 
 /* backwards compatibility */
 #include "mbim-compat.h"

@@ -46,6 +46,7 @@
 #include "mbim-google.h"
 #include "mbim-fibocom.h"
 #include "mbim-compal.h"
+#include "mbim-intel-at-tunnel.h"
 
 /*****************************************************************************/
 
@@ -2241,6 +2242,9 @@ mbim_message_get_printable_full (const MbimMessage  *self,
             break;
         case MBIM_SERVICE_COMPAL:
             fields_printable = __mbim_message_compal_get_printable_fields (self, line_prefix, &inner_error);
+            break;
+        case MBIM_SERVICE_INTEL_AT_TUNNEL:
+            fields_printable = __mbim_message_intel_at_tunnel_get_printable_fields (self, line_prefix, &inner_error);
             break;
         case MBIM_SERVICE_INVALID:
         case MBIM_SERVICE_LAST:

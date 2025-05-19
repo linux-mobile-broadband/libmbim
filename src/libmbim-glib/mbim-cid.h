@@ -516,6 +516,20 @@ typedef enum { /*< since=1.32 >*/
 } MbimCidCompal;
 
 /**
+ * MbimCidIntelAtTunnel:
+ * @MBIM_CID_INTEL_AT_TUNNEL_UNKNOWN: Unknown command.
+ * @MBIM_CID_INTEL_AT_TUNNEL_AT_COMMAND: AT over MBIM message.
+ *
+ * MBIM commands in the %MBIM_SERVICE_INTEL_AT_TUNNEL service.
+ *
+ * Since: 1.34
+ */
+typedef enum { /*< since=1.34 >*/
+    MBIM_CID_INTEL_AT_TUNNEL_UNKNOWN    = 0,
+    MBIM_CID_INTEL_AT_TUNNEL_AT_COMMAND = 1,
+} MbimCidIntelAtTunnel;
+
+/**
  * mbim_cid_can_set:
  * @service: a #MbimService.
  * @cid: a command ID.

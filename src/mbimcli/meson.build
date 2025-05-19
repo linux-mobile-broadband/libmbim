@@ -32,6 +32,7 @@ mbimcli_sources = files(
   'mbimcli-dss.c',
   'mbimcli-fibocom.c',
   'mbimcli-google.c',
+  'mbimcli-intel-at-tunnel.c',
   'mbimcli-intel-firmware-update.c',
   'mbimcli-intel-mutual-authentication.c',
   'mbimcli-intel-thermal-rf.c',
