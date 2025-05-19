@@ -20,6 +20,7 @@
 
 #include "mbimcli.h"
 #include "mbimcli-helpers.h"
+#include "mbimcli-helpers-quectel.h"
 
 /* Context */
 typedef struct {
@@ -188,73 +189,6 @@ qdu_command_ready (MbimDevice   *device,
     shutdown (TRUE);
 }
 
-static gboolean
-set_command_input_parse (const gchar             *str,
-                         gchar                  **command_str,
-                         MbimQuectelCommandType  *command_type)
-{
-    g_auto(GStrv)          split            = NULL;
-    guint                  num_parts        = 0;
-    g_autofree gchar      *command_type_str = NULL;
-    MbimQuectelCommandType new_command_type;
-    g_autoptr(GError)      error            = NULL;
-
-    g_assert (command_str != NULL);
-
-    /* Format of the string is:
-     *    "[\"Command\"]"
-     * or:
-     *    "[(Command type),(\"Command\")]"
-     */
-    split = g_strsplit (str, ",", -1);
-    num_parts = g_strv_length (split);
-
-    /* The at command may have multiple commas, like:at+qcfg="usbcfg",0x2C7C,0x6008,0x00FF ,
-     * so we need to take the first split to see if it is the command type.
-     * If it is, then combine the remaining splits into a string.
-     * If not, combine the splits into a string. */
-    if (num_parts > 0 && split[0] != NULL) {
-        command_type_str = g_ascii_strdown (split[0], -1);
-
-        if (!g_strcmp0 (command_type_str, "at") ||
-            !g_strcmp0 (command_type_str, "system")) {
-            if (!mbimcli_read_quectel_command_type_from_string (command_type_str, &new_command_type, &error)) {
-                g_printerr ("error: couldn't parse input command-type: %s\n", error->message);
-                return FALSE;
-            }
-
-            if ((new_command_type != MBIM_QUECTEL_COMMAND_TYPE_AT) &&
-                (new_command_type != MBIM_QUECTEL_COMMAND_TYPE_SYSTEM)) {
-                g_printerr ("error: couldn't parse input string, invalid command type.\n");
-                return FALSE;
-            }
-
-            *command_type = new_command_type;
-
-            if (num_parts > 1)
-                *command_str = g_strjoinv (",", split + 1);
-            else {
-                g_printerr ("error: couldn't parse input string, missing arguments.\n");
-                return FALSE;
-            }
-        } else if (num_parts > 1) {
-            *command_str = g_strjoinv (",", split);
-        } else {
-            *command_str = g_strdup (split[0]);
-        }
-
-        if (g_str_has_prefix (*command_str, "AT") || g_str_has_prefix (*command_str, "at"))
-            return TRUE;
-        else {
-            g_printerr ("error: Wrong AT command , command must start with \"AT\".\n");
-            return FALSE;
-        }
-    } else {
-        g_printerr ("error: The input string is empty, please re-enter.\n");
-        return FALSE;
-    }
-}
-
 void
 mbimcli_quectel_run (MbimDevice   *device,
                      GCancellable *cancellable)
@@ -308,7 +242,7 @@ mbimcli_quectel_run (MbimDevice   *device,
         guint32                req_size = 0;
         MbimQuectelCommandType command_type = MBIM_QUECTEL_COMMAND_TYPE_AT;
 
-        if (!set_command_input_parse (set_command_str, &req_str, &command_type)) {
+        if (!mbimcli_helpers_quectel_set_command_input_parse (set_command_str, &req_str, &command_type)) {
             g_printerr ("error: parse input string failed!\n");
             shutdown (FALSE);
             return;
