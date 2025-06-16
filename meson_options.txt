@@ -3,6 +3,8 @@
 
 option('mbim_username', type: 'string', value: '', description: 'user allowed to access MBIM devices')
 
+option('mbim_groupname', type: 'string', value: '', description: 'group allowed to access MBIM devices')
+
 option('udevdir', type: 'string', value: '', description: 'where udev base directory is')
 
 option('introspection', type: 'boolean', value: true, description: 'build introspection support')

@@ -13,6 +13,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <grp.h>
 #include <pwd.h>
 
 #include "mbim-helpers.h"
@@ -79,8 +80,8 @@ mbim_helpers_check_user_allowed (uid_t    uid,
     expected_usr = getpwnam (MBIM_USERNAME);
     if (!expected_usr) {
         g_set_error (error,
-                     MBIM_CORE_ERROR,
-                     MBIM_CORE_ERROR_FAILED,
+                     G_IO_ERROR,
+                     g_io_error_from_errno (errno),
                      "Not enough privileges (unknown username %s)", MBIM_USERNAME);
         return FALSE;
     }
@@ -89,6 +90,51 @@ mbim_helpers_check_user_allowed (uid_t    uid,
         return TRUE;
 #endif
 
+    g_set_error (error,
+                 MBIM_CORE_ERROR,
+                 MBIM_CORE_ERROR_FAILED,
+                 "Not enough privileges");
+    return FALSE;
+}
+
+/*****************************************************************************/
+
+gboolean
+mbim_helpers_check_group_allowed (uid_t    uid,
+                                  GError **error)
+{
+#ifndef MBIM_GROUPNAME_ENABLED
+    if (uid == 0)
+        return TRUE;
+#else
+# ifndef MBIM_GROUPNAME
+#  error MBIM groupname not defined
+# endif
+
+    struct passwd *pw;
+    struct group *grp;
+    guint i;
+
+    grp = getgrnam (MBIM_GROUPNAME);
+    if (!grp) {
+        g_set_error (error,
+                     G_IO_ERROR,
+                     g_io_error_from_errno (errno),
+                     "Not enough privileges (unknown group %s)", MBIM_GROUPNAME);
+        return FALSE;
+    }
+
+    pw = getpwuid (uid);
+    if (pw && pw->pw_gid == grp->gr_gid)
+        return TRUE;
+
+    if (pw && grp->gr_mem) {
+        for (i = 0; grp->gr_mem[i]; i++) {
+            if (g_strcmp0 (grp->gr_mem[i], pw->pw_name) == 0)
+                return TRUE;
+        }
+    }
+#endif
     g_set_error (error,
                  MBIM_CORE_ERROR,
                  MBIM_CORE_ERROR_FAILED,
