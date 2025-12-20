@@ -39,6 +39,10 @@ gboolean mbim_helpers_check_user_allowed (uid_t    uid,
                                           GError **error);
 
 G_GNUC_INTERNAL
+gboolean mbim_helpers_check_group_allowed (uid_t    uid,
+                                          GError **error);
+
+G_GNUC_INTERNAL
 gchar *mbim_helpers_get_devpath (const gchar  *cdc_wdm_path,
                                  GError      **error);
 

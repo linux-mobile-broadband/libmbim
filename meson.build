@@ -155,16 +155,29 @@ mbim_username = get_option('mbim_username')
 enable_mbim_username = (mbim_username != '')
 if enable_mbim_username
   config_h.set_quoted('MBIM_USERNAME', mbim_username)
+else
+  mbim_username = 'no (root)'
+endif
+config_h.set('MBIM_USERNAME_ENABLED', enable_mbim_username)
 
+# MBIM group
+mbim_groupname = get_option('mbim_groupname')
+enable_mbim_groupname = (mbim_groupname != '')
+if enable_mbim_groupname
+  config_h.set_quoted('MBIM_GROUPNAME', mbim_groupname)
+else
+  mbim_groupname = 'none'
+endif
+config_h.set('MBIM_GROUPNAME_ENABLED', enable_mbim_groupname)
+
+# udev base directory - needed if either username or groupname is specified
+if enable_mbim_username or enable_mbim_groupname
   # FIXME: udev base directory, prefix can't be overrided
   udev_udevdir = get_option('udevdir')
   if udev_udevdir == ''
     udev_udevdir = dependency('udev').get_pkgconfig_variable('udevdir')
   endif
-else
-  mbim_username = 'no (root)'
 endif
-config_h.set('MBIM_USERNAME_ENABLED', enable_mbim_username)
 
 # introspection support
 enable_gir = get_option('introspection')
@@ -212,9 +225,10 @@ summary({
 
 summary({
   'prefix': mbim_prefix,
-  'udev base directory': (enable_mbim_username ? udev_udevdir : 'disabled'),
+  'udev base directory': ((enable_mbim_username or enable_mbim_groupname) ? udev_udevdir : 'disabled'),
 }, section: 'System paths')
 
 summary({
   'MBIM username': mbim_username,
+  'MBIM groupname': mbim_groupname,
 }, section: 'Features')

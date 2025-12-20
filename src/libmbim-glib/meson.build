@@ -148,5 +148,13 @@ if enable_mbim_username
   )
 endif
 
+if enable_mbim_groupname
+  configure_file(
+    input: '76-mbim-device-group.rules.in',
+    output: '@BASENAME@',
+    configuration: {'MBIM_GROUPNAME': mbim_groupname},
+    install_dir: udev_udevdir / 'rules.d',
+  )
+endif
 
 subdir('test')

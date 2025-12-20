@@ -1259,6 +1259,7 @@ incoming_cb (GSocketService    *service,
     Client                  *client;
     g_autoptr(GCredentials)  credentials = NULL;
     g_autoptr(GError)        error = NULL;
+    g_autoptr(GError)        gr_error = NULL;
     uid_t                    uid;
 
     /* Each new incoming request updates the client id, even if the request is
@@ -1280,8 +1281,15 @@ incoming_cb (GSocketService    *service,
     }
 
     if (!mbim_helpers_check_user_allowed (uid, &error)) {
-        g_warning ("[client %lu] not allowed: %s", client_id, error->message);
-        return;
+        if (!mbim_helpers_check_group_allowed (uid, &gr_error)) {
+            if (gr_error)
+                g_warning ("[client %lu] group not allowed: %s", client_id, gr_error->message);
+            else
+                g_warning ("[client %lu] not allowed: %s", client_id, error->message);
+            return;
+        }
+
+        g_debug ("[client %lu] member of allowed group", client_id);
     }
 
     /* Create client */
@@ -1575,9 +1583,17 @@ MbimProxy *
 mbim_proxy_new (GError **error)
 {
     g_autoptr(MbimProxy) self = NULL;
+    uid_t                uid;
 
-    if (!mbim_helpers_check_user_allowed (getuid(), error))
-        return NULL;
+    uid = getuid ();
+
+    /* Allow proxy creation if one of [uid, group] are allowed */
+    if (!mbim_helpers_check_user_allowed (uid, error)) {
+        g_clear_error (error);
+
+        if (!mbim_helpers_check_group_allowed (uid, error))
+            return NULL;
+    }
 
     self = g_object_new (MBIM_TYPE_PROXY, NULL);
     if (!setup_socket_service (self, error))
