@@ -1350,6 +1350,11 @@ read_max_control_transfer (MbimDevice *self)
             g_debug ("[%s] read max control message size from descriptors file: %" G_GUINT16_FORMAT,
                      self->priv->path_display,
                      max);
+            if (max > MAX_CONTROL_TRANSFER) {
+                g_warning ("[%s] max control message size from descriptors file (%u) is too large, clamping to %u",
+                           self->priv->path_display, max, MAX_CONTROL_TRANSFER);
+                max = MAX_CONTROL_TRANSFER;
+            }
             return max;
         }
 
@@ -1457,6 +1462,11 @@ create_iochannel_with_fd (GTask *task)
         g_debug ("[%s] queried max control message size: %" G_GUINT16_FORMAT,
                  self->priv->path_display,
                  max);
+        if (max > MAX_CONTROL_TRANSFER) {
+            g_warning ("[%s] queried max control message size (%u) is too large, clamping to %u",
+                       self->priv->path_display, max, MAX_CONTROL_TRANSFER);
+            max = MAX_CONTROL_TRANSFER;
+        }
     }
     self->priv->max_control_transfer = max;
 
